@@ -23,6 +23,9 @@ requestCallback = function(req, res){
     const method = req.method.toLowerCase();
     console.log('with method ' + method);
 
+    const headers = req.headers;
+    console.log('with headers: ', headers);
+
 
     // obtaining the payload
     const decoder = new StringDecoder('utf-8');
