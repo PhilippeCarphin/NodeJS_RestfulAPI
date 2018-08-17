@@ -12,20 +12,16 @@ strip_slashes = function(path){
 };
 requestCallback = function(req, res){
 
-    // Get the URL and parse it
     const parsedUrl = url.parse(req.url, true);
 
-
-    // Get the path
     const trimmedPath = strip_slashes(parsedUrl.pathname);
+    console.log('Request path: ' + trimmedPath);
 
+    const queryStringObject = parsedUrl.query;
+    console.log('and with these query string parameters: ', queryStringObject);
 
-    // Send the response
-    res.end('Hello World\n');
-
-
-    // obtaining the method
     const method = req.method.toLowerCase();
+    console.log('with method ' + method);
 
 
     // obtaining the payload
@@ -35,20 +31,14 @@ requestCallback = function(req, res){
         buffer += decoder.write(data);
     });
 
-    // get the query string as an object
-    const queryStringObject = parsedUrl.query;
-
-
 
     req.on('end', function(){
         console.log('Request : req.on(end)');
     });
 
-    // Logging the request path
-    console.log('got request on port 3000 for ' + trimmedPath);
-    console.log('with method ' + method);
-    console.log('and with these query string parameters: ', queryStringObject);
 
+    // Send the response
+    res.end('Hello World\n');
 };
 const server = http.createServer(requestCallback);
 
