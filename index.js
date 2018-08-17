@@ -4,15 +4,33 @@
 
 const http = require('http');
 
+const url = require('url');
 
-// The server responds to requests with a string
-var server = http.createServer(function(req, res){
-    console.log('got request on port 3000');
+strip_slashes = function(path){
+    return path.replace(/^\/+|\/+$/g, '');
+};
+requestCallback = function(req, res){
+
+    // Get the URL and parse it
+    var parsedUrl = url.parse(req.url, true);
+
+
+    // Get the path
+    var trimmedPath = strip_slashes(parsedUrl.pathname);
+
+
+    // Send the response
     res.end('Hello World\n');
-});
 
-// Start the server, and have it listen on port 3000
-server.listen(3000, function(){
+
+    // Logging the request path
+    console.log('got request on port 3000 for ' + trimmedPath);
+
+};
+var server = http.createServer(requestCallback);
+
+serverUpCallback = function(){
     console.log("the server is listening on port 3000");
-});
+};
+server.listen(3000,serverUpCallback);
 
