@@ -14,18 +14,7 @@ requestCallback = function(req, res){
 
     const parsedUrl = url.parse(req.url, true);
 
-    const trimmedPath = strip_slashes(parsedUrl.pathname);
-    console.log('Request path: ' + trimmedPath);
-
-    const queryStringObject = parsedUrl.query;
-    console.log('and with these query string parameters: ', queryStringObject);
-
-    const method = req.method.toLowerCase();
-    console.log('with method ' + method);
-
-    const headers = req.headers;
-    console.log('with headers: ', headers);
-
+    const path = strip_slashes(parsedUrl.pathname);
 
     // obtaining the payload
     const decoder = new StringDecoder('utf-8');
@@ -34,8 +23,13 @@ requestCallback = function(req, res){
         buffer += decoder.write(data);
     });
 
-
     req.on('end', function(){
+        buffer += decoder.end();
+        console.log('Request path: ' + path);
+        console.log('and with these query string parameters: ', parsedUrl.query);
+        console.log('with method ' + req.method);
+        console.log('with headers: ', req.headers);
+        console.log('PAYLOAD BUFFER' + buffer);
         console.log('Request : req.on(end)');
     });
 
