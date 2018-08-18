@@ -40,6 +40,7 @@ const server = http.createServer(function(req, res)
         {
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
             payload = typeof(payload) == 'object' ? payload : {};
+            res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
             res.end(JSON.stringify( payload));
         };
