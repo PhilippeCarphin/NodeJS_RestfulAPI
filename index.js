@@ -3,7 +3,9 @@
  */
 const config = require('./config.js');
 const http = require('http');
+const https = require('https');
 const url = require('url');
+const fs = require('fs');
 const StringDecoder = require('string_decoder').StringDecoder;
 
 
@@ -12,6 +14,15 @@ strip_slashes = function(path)
     return path.replace(/^\/+|\/+$/g, '');
 };
 
+
+/**
+ * This is the basic handler for a request.  Set the request on('data', ...) and
+ * on('end)' callbacks and exit.
+ * The on('end') callback has the data of the request in its closure so it can access
+ * it when the request is done.
+ * @param req : the request object
+ * @param res : the response object
+ */
 var handleRequest = function(req, res)
 {
     const parsedUrl = url.parse(req.url, true);
@@ -24,6 +35,11 @@ var handleRequest = function(req, res)
         buffer += decoder.write(data);
     });
 
+    /**
+     * Once the request has finished being received, assemble its data and pass
+     * it to the appropriate handler and return the response.
+     * The data is from the closure of the callback.
+     */
     requestEndCallback = function(){
         buffer += decoder.end();
 
@@ -50,20 +66,46 @@ var handleRequest = function(req, res)
     req.on('end', requestEndCallback);
 };
 
-const server = http.createServer(handleRequest);
-
-server.listen(config.httpPort,function(){
-    console.log("the server is listening on port", config.httpPort, "in config", config.envName, ":", );
-});
-
-var handlers = {};
-
-handlers.root = function(data, callback)
+/**
+ * Start an http server and an https server with the same handle request callback
+ */
+var startServers = function()
 {
-    console.log('handler for path \'\' called with data:', data);
-    callback(200, {'name' : 'root handler'});
+    console.log('config', config);
+    const httpServer = http.createServer(handleRequest);
+    httpServer.listen(config.environment.httpPort,function(){
+        console.log("the http server is listening on port", config.environment.httpPort, "in config", config.envName,);
+    });
+
+    const httpsServerOptions = {
+        'key': fs.readFileSync(config.https.keyFile),
+        'cert': fs.readFileSync(config.https.certFile),
+
+    };
+    const httpsServer = https.createServer(httpsServerOptions, handleRequest);
+    httpsServer.listen(config.environment.httpsPort, function(){
+        console.log(
+            "the https server is listening on port", config.environment.httpsPort,
+            "in config", config.envName
+        );
+    });
 };
 
+var handlers = {};
+/**
+ * @param data : The data from the request
+ * @param endCallback : function to call when the handling is finished
+ */
+handlers.root = function(data, endCallback)
+{
+    console.log('handler for path \'\' called with data:', data);
+    endCallback(200, {'name' : 'root handler'});
+};
+
+/**
+ * @param data : The data from the request
+ * @param endCallback : function to call when the handling is finished
+ */
 handlers.notFound = function(data, endCallback)
 {
     endCallback(404, {'path': data.path });
@@ -73,3 +115,4 @@ const router = {
     '/': handlers.root
 };
 
+startServers();

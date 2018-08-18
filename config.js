@@ -14,9 +14,14 @@ var environments = {
 
 };
 
+var https = {
+    'keyFile': './https/key.pem',
+    'certFile': './https/cert.pem'
+};
+
 
 nodeEnv = 'NODE_ENV' in process.env ? process.env.NODE_ENV : 'staging';
 
 environment = nodeEnv in environments ? environments[nodeEnv] : environments.staging;
 
-module.exports = environment;
+module.exports = {'environment': environment, 'https': https};
