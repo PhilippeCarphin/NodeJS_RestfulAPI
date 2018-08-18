@@ -2,6 +2,8 @@
  * Primary file for the API
  */
 const config = require('./config.js');
+var lib = require('./lib/data.js');
+
 const http = require('http');
 const https = require('https');
 const url = require('url');
@@ -102,6 +104,11 @@ handlers.root = function(data, endCallback)
     endCallback(200, {'name' : 'root handler'});
 };
 
+handlers.ping = function(data, endCallback)
+{
+    endCallback(200, {});
+};
+
 /**
  * @param data : The data from the request
  * @param endCallback : function to call when the handling is finished
@@ -112,7 +119,21 @@ handlers.notFound = function(data, endCallback)
 };
 
 const router = {
-    '/': handlers.root
+    '/': handlers.root,
+    '/ping': handlers.ping
 };
 
 startServers();
+
+/*************************** TESTS (REMOVE THIS AFTER) *************************/
+
+console.log(lib.baseDir);
+const dataToWrite = {
+    'city': 'Montreal',
+    'province': 'Quebec',
+    'country': 'Canada'
+};
+lib.create('phil', 'carphin', dataToWrite , function(message){
+    if(message) console.log(message);
+});
+
