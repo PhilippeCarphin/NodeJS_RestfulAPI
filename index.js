@@ -2,7 +2,7 @@
  * Primary file for the API
  */
 const config = require('./config.js');
-var lib = require('./lib/data.js');
+const data = require('./lib/data.js');
 
 const http = require('http');
 const https = require('https');
@@ -42,7 +42,7 @@ var handleRequest = function(req, res)
      * it to the appropriate handler and return the response.
      * The data is from the closure of the callback.
      */
-    requestEndCallback = function(){
+    req.on('end', function(){
         buffer += decoder.end();
 
         const data = {
@@ -64,8 +64,7 @@ var handleRequest = function(req, res)
             res.end(JSON.stringify( payload));
         };
         requestHandler(data, handlerEndCallback);
-    };
-    req.on('end', requestEndCallback);
+    });
 };
 
 /**
@@ -127,13 +126,18 @@ startServers();
 
 /*************************** TESTS (REMOVE THIS AFTER) *************************/
 
-console.log(lib.baseDir);
+console.log(data.baseDir);
 const dataToWrite = {
     'city': 'Montreal',
     'province': 'Quebec',
     'country': 'Canada'
 };
-lib.create('phil', 'carphin', dataToWrite , function(message){
-    if(message) console.log(message);
+data.read('phil', 'carphin', function(message, data){
+    console.log(message, data);
 });
+data.create('carphin', 'paul', {'nom':'Paul Carphin', 'number': '5147031336'}, function(message, data){
+    console.log(message, data);
+});
+
+console.log('hello');
 
