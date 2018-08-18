@@ -1,6 +1,7 @@
 /*
  * Primary file for the API
  */
+const config = require('./config.js');
 const http = require('http');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
@@ -49,8 +50,8 @@ const server = http.createServer(function(req, res)
     req.on('end', requestEndCallback);
 });
 
-server.listen(3000,function(){
-    console.log("the server is listening on port 3000");
+server.listen(config.httpPort,function(){
+    console.log("the server is listening on port", config.httpPort, "in config", config.envName, ":", );
 });
 
 var handlers = {};
