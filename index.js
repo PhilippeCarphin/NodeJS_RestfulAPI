@@ -12,7 +12,7 @@ strip_slashes = function(path)
     return path.replace(/^\/+|\/+$/g, '');
 };
 
-const server = http.createServer(function(req, res)
+var handleRequest = function(req, res)
 {
     const parsedUrl = url.parse(req.url, true);
     const path = '/' + strip_slashes(parsedUrl.pathname);
@@ -48,7 +48,9 @@ const server = http.createServer(function(req, res)
         requestHandler(data, handlerEndCallback);
     };
     req.on('end', requestEndCallback);
-});
+};
+
+const server = http.createServer(handleRequest);
 
 server.listen(config.httpPort,function(){
     console.log("the server is listening on port", config.httpPort, "in config", config.envName, ":", );
