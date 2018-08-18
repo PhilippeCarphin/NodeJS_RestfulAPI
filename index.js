@@ -132,11 +132,43 @@ const dataToWrite = {
     'province': 'Quebec',
     'country': 'Canada'
 };
-data.read('phil', 'carphin', function(message, data){
-    console.log(message, data);
+data.read('phil', 'carphin', function(err, data){
+    if(err){
+        console.log(err);
+    } else {
+        console.log("data.read data :", data);
+    }
 });
-data.create('carphin', 'paul', {'nom':'Paul Carphin', 'number': '5147031336'}, function(message, data){
-    console.log(message, data);
+data.create('carphin', 'paul', {'nom':'Paul Carphin', 'number': '5147031336'}, function(err, data){
+    if(err){
+        console.log(err);
+    } else {
+        console.log("data.create: data :", data);
+    }
+});
+
+data.read('carphin', 'paul', function(err, data){
+    if(err){
+        console.log(err);
+    } else {
+        console.log("data.read data :", data);
+    }
+});
+
+data.update('carphin', 'paul', {'nom':'Paul Carphin', 'number': '5148881336'}, function(err, data){
+    if(err){
+        console.log(err);
+    } else {
+        console.log("data.create: data :", data);
+    }
+});
+
+data.read('carphin', 'paul', function(err, data){
+    if(err){
+        console.log(err);
+    } else {
+        console.log("data.read data :", data);
+    }
 });
 
 console.log('hello');
