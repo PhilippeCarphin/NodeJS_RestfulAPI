@@ -12,24 +12,17 @@ const fs = require('fs');
 const StringDecoder = require('string_decoder').StringDecoder;
 
 
-strip_slashes = function(path)
-{
-    return path.replace(/^\/+|\/+$/g, '');
-};
-
-
-/**
- * This is the basic handler for a request.  Set the request on('data', ...) and
- * on('end)' callbacks and exit.
- * The on('end') callback has the data of the request in its closure so it can access
- * it when the request is done.
+/******************************************************************************
+ * This is the basic handler for a request. Set the request on('data', ...) and
+ * on('end)' callbacks and exit. The on('end') callback has the data of the
+ * request in its closure so it can access it when the request is done.
  * @param req : the request object
  * @param res : the response object
- */
+ ******************************************************************************/
 var handleRequest = function(req, res)
 {
     const parsedUrl = url.parse(req.url, true);
-    const path = '/' + strip_slashes(parsedUrl.pathname);
+    const path = '/' + parsedUrl.pathname.replace(/^\/+|\/+$/g, '');
 
     // obtaining the payload
     const decoder = new StringDecoder('utf-8');
@@ -38,10 +31,10 @@ var handleRequest = function(req, res)
         buffer += decoder.write(data);
     });
 
-    /**
+    /*
      * Once the request has finished being received, assemble its data and pass
-     * it to the appropriate handler and return the response.
-     * The data is from the closure of the callback.
+     * it to the appropriate handler and return the response. The data is from
+     * the closure of the callback.
      */
     req.on('end', function(){
         buffer += decoder.end();
@@ -54,14 +47,11 @@ var handleRequest = function(req, res)
             'payload': (buffer != '' ? JSON.parse(buffer) : {})
         };
 
-        console.log("parsedUrl.query", parsedUrl.query);
         requestHandler = (path in router) ? router[path] : handlers.notFound;
 
         handlerEndCallback = function(statusCode, payload)
         {
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
-            console.log("typeof(payload):", typeof(payload));
-            console.log("value of payload", payload);
             payload = typeof(payload) == 'object' ? payload : {};
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
@@ -71,9 +61,9 @@ var handleRequest = function(req, res)
     });
 };
 
-/**
+/*******************************************************************************
  * Start an http server and an https server with the same handle request callback
- */
+ *******************************************************************************/
 var startServers = function()
 {
     console.log('config', config);
@@ -96,6 +86,9 @@ var startServers = function()
     });
 };
 
+/*******************************************************************************
+ * Map between paths and request handlers for paths
+ ******************************************************************************/
 const router = {
     '/': handlers.root,
     '/ping': handlers.ping,
@@ -104,13 +97,3 @@ const router = {
 };
 
 startServers();
-
-/*
- * Test of the twilio send sms function
- */
-helpers.sendTwilioSms('5149781336', 'Hello from Twilio', function(err, extra){
-    if(err){
-        console.log("Error sending sms with twilio", extra);
-        return;
-    }
-});
