@@ -79,7 +79,7 @@ var startServers = function()
     console.log('config', config);
     const httpServer = http.createServer(handleRequest);
     httpServer.listen(config.environment.httpPort,function(){
-        console.log("the http server is listening on port", config.environment.httpPort, "in config", config.envName,);
+        console.log("the http server is listening on port", config.environment.httpPort, "in config", config.environment.envName,);
     });
 
     const httpsServerOptions = {
@@ -91,7 +91,7 @@ var startServers = function()
     httpsServer.listen(config.environment.httpsPort, function(){
         console.log(
             "the https server is listening on port", config.environment.httpsPort,
-            "in config", config.envName
+            "in config", config.environment.envName
         );
     });
 };
@@ -104,3 +104,13 @@ const router = {
 };
 
 startServers();
+
+/*
+ * Test of the twilio send sms function
+ */
+helpers.sendTwilioSms('5149781336', 'Hello from Twilio', function(err, extra){
+    if(err){
+        console.log("Error sending sms with twilio", extra);
+        return;
+    }
+});
