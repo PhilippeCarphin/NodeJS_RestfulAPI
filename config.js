@@ -3,13 +3,15 @@ var environments = {
     staging: {
         'httpPort': 3000,
         'httpsPort' : 3001,
-        'envName': 'staging'
+        'envName': 'staging',
+        'hashSecret': 'ThisIsSecret',
     },
 
     production: {
         'httpPort': 5000,
         'httpPort': 5001,
-        'envName': 'production'
+        'envName': 'production',
+        'hashSecret': 'ThisIsSecret',
     },
 
 };

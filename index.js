@@ -50,15 +50,18 @@ var handleRequest = function(req, res)
             'path' : path,
             'method' : req.method,
             'headers' : req.headers,
-            'query' : req.query,
-            'payload': JSON.parse(buffer)
+            'query' : parsedUrl.query,
+            'payload': (buffer != '' ? JSON.parse(buffer) : {})
         };
 
+        console.log("parsedUrl.query", parsedUrl.query);
         requestHandler = (path in router) ? router[path] : handlers.notFound;
 
         handlerEndCallback = function(statusCode, payload)
         {
             statusCode = typeof(statusCode) == 'number' ? statusCode : 200;
+            console.log("typeof(payload):", typeof(payload));
+            console.log("value of payload", payload);
             payload = typeof(payload) == 'object' ? payload : {};
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
@@ -95,7 +98,8 @@ var startServers = function()
 
 const router = {
     '/': handlers.root,
-    '/ping': handlers.ping
+    '/ping': handlers.ping,
+    '/users' : handlers.users,
 };
 
 startServers();
