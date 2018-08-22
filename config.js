@@ -5,6 +5,7 @@ var environments = {
         'httpsPort' : 3001,
         'envName': 'staging',
         'hashSecret': 'ThisIsSecret',
+        'maxChecks': 5,
     },
 
     production: {
@@ -12,6 +13,7 @@ var environments = {
         'httpPort': 5001,
         'envName': 'production',
         'hashSecret': 'ThisIsSecret',
+        'maxChecks': 5,
     },
 
 };
